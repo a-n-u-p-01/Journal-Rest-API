@@ -4,6 +4,7 @@ import com.journal.Journal.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     public boolean saveNewUser(User user) {
         try {
@@ -32,6 +34,8 @@ public class UserService {
     }
 
     public void saveUser(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("USER"));
         userRepository.save(user);
     }
 
