@@ -1,8 +1,6 @@
 package com.journal.Journal.controller;
-
 import com.journal.Journal.entity.User;
 import com.journal.Journal.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class PublicController {
     @Autowired
     private UserService userService;
+    private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     //Health check
     @GetMapping("/health")
     public String healthCheck(){
@@ -21,10 +20,13 @@ public class PublicController {
     }
 
     //Create User
-    @PostMapping
+    @PostMapping("create-user")
     public ResponseEntity<?> addUser(@RequestBody User user){
-        userService.saveUser(user);
-        return new ResponseEntity<>("User"+user.getId()+"added.", HttpStatus.CREATED);
+       if(userService.findByUserName(user.getUserName()) == null){
+           userService.saveUser(user);
+           return new ResponseEntity<>("User Id '"+user.getId()+"' added.", HttpStatus.CREATED);
+       }
+        return new ResponseEntity<>("User name already exist",HttpStatus.BAD_REQUEST);
     }
 
 }

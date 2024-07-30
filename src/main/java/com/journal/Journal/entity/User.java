@@ -1,13 +1,12 @@
 package com.journal.Journal.entity;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.journal.Journal.config.ObjectIdSerializer;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
     @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId id;
     @Indexed(unique = true)
     @NonNull

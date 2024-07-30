@@ -25,9 +25,8 @@ public class JournalEntryService {
     private UserRepository userRepository;
 
 
-    public void saveEntry(JournalEntry journalEntry, ObjectId id) {
+    public void saveEntry(JournalEntry journalEntry, User user) {
         try {
-            User user = userRepository.findById(id).orElse(null);
             journalEntry.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryRepository.save(journalEntry);
             user.getJournalEntries().add(saved);
@@ -37,8 +36,14 @@ public class JournalEntryService {
         }
     }
 
-    public void saveEntry(JournalEntry journalEntry) {
-        journalEntryRepository.save(journalEntry);
+    public boolean updateEntry(JournalEntry journalEntry, ObjectId id) {
+        if(journalEntryRepository.findById(id).isPresent()){
+            journalEntry.setId(id);
+            journalEntry.setDate(journalEntryRepository.findById(id).get().getDate());
+            journalEntryRepository.save(journalEntry);
+            return true;
+        }
+        return false;
     }
 
     public List<JournalEntry> getAll() {

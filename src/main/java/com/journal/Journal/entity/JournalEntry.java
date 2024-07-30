@@ -1,5 +1,7 @@
 package com.journal.Journal.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.journal.Journal.config.ObjectIdSerializer;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class JournalEntry {
     @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId id;
     @NonNull
     private String title;
