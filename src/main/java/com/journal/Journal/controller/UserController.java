@@ -38,7 +38,7 @@ public class UserController {
         if (userService.deleteByUserName(authentication.getName())){
             return new ResponseEntity<>("User Deleted",HttpStatus.OK);
         }
-        return new ResponseEntity<>("User Not found",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("User Not found",HttpStatus.NOT_FOUND);
     }
 
 }
