@@ -44,7 +44,7 @@ public class UserService {
         List<User> users = userRepository.findAll();
         return users.stream()
                 .map(user -> new UserDTO(user.getId(),user.getUserName()))
-                .collect(Collectors.toList()).reversed();
+                .collect(Collectors.toList());
     }
 
     public Optional<User> findById(ObjectId id) {
