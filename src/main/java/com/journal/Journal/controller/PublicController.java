@@ -13,18 +13,13 @@ public class PublicController {
     @Autowired
     private UserService userService;
     private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    //Health check
-    @GetMapping("/health")
-    public String healthCheck(){
-        return "OK";
-    }
 
     //Create User
     @PostMapping("create-user")
     public ResponseEntity<?> addUser(@RequestBody User user){
        if(userService.findByUserName(user.getUserName()) == null){
            userService.saveUser(user);
-           return new ResponseEntity<>("User Id '"+user.getId()+"' added.", HttpStatus.CREATED);
+           return new ResponseEntity<>("User with ID "+user.getId()+" has successfully created.", HttpStatus.CREATED);
        }
         return new ResponseEntity<>("User name already exist",HttpStatus.BAD_REQUEST);
     }

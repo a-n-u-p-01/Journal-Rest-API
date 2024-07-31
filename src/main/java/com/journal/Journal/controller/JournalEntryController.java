@@ -29,23 +29,23 @@ public class JournalEntryController {
     public ResponseEntity<List<JournalEntry>> getAllJournals(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<JournalEntry> journalEntries = userService.findByUserName(authentication.getName()).getJournalEntries();
-        return new ResponseEntity<>(journalEntries,HttpStatus.FOUND);
+        return new ResponseEntity<>(journalEntries,HttpStatus.OK);
     }
     //Get Journal by id
     @GetMapping("/{id}")
     public ResponseEntity<JournalEntry> getById(@PathVariable ObjectId id){
         Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
-        return journalEntry.map(entry -> new ResponseEntity<>(entry, HttpStatus.FOUND)).orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return journalEntry.map(entry -> new ResponseEntity<>(entry, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     //Create Journal
     @PostMapping
-    public ResponseEntity<JournalEntry> createEntry(@RequestBody JournalEntry myEntry) {
+    public ResponseEntity<?> createEntry(@RequestBody JournalEntry myEntry) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByUserName(authentication.getName());
         try {
             journalEntryService.saveEntry(myEntry,user);
-            return new ResponseEntity<>(myEntry, HttpStatus.CREATED);
+            return new ResponseEntity<>("Journal added successfully.", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -55,9 +55,9 @@ public class JournalEntryController {
     public ResponseEntity<?> deleteJournalById(@PathVariable ObjectId id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(journalEntryService.deleteById(id,authentication.getName())){
-            return new ResponseEntity<>("Journal Deleted", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>("Journal Deleted", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Journal Not Found", HttpStatus.NOT_FOUND);
     }
     //Update Journal
     @PutMapping("{id}")
@@ -65,9 +65,6 @@ public class JournalEntryController {
         if(journalEntryService.updateEntry(journal,id)){
             return new ResponseEntity<>("Journal Updated",HttpStatus.OK);
         }
-        return new ResponseEntity<>("Journal Updated",HttpStatus.OK);
+        return new ResponseEntity<>("Journal Not Found",HttpStatus.NOT_FOUND);
     }
-
-
-
 }

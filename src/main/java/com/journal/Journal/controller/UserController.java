@@ -29,14 +29,14 @@ public class UserController {
         user1.setUserName(user.getUserName());
         user1.setPassword(user.getPassword());
         userService.saveUser(user1);
-        return new ResponseEntity<>("Updated",HttpStatus.OK);
+        return new ResponseEntity<>("User information updated successfully.", HttpStatus.OK);
     }
     //Delete User
     @DeleteMapping
     public ResponseEntity<?> deleteUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (userService.deleteByUserName(authentication.getName())){
-            return new ResponseEntity<>("Account Deleted",HttpStatus.OK);
+            return new ResponseEntity<>("User Deleted",HttpStatus.OK);
         }
         return new ResponseEntity<>("User Not found",HttpStatus.BAD_REQUEST);
     }
