@@ -16,6 +16,7 @@ public class HealthCheckController {
     @Autowired
     private MongoDatabase mongoDatabase;
 
+    //Check health of the application
     @GetMapping
     public ResponseEntity<String> checkHealth() {
         if (checkMongoDB()) {
@@ -25,6 +26,7 @@ public class HealthCheckController {
         }
     }
 
+    //check the connection between database and application
     private boolean checkMongoDB() {
         try {
             mongoDatabase.runCommand(new org.bson.Document("ping", 1));

@@ -24,7 +24,7 @@ public class JournalEntryService {
     @Autowired
     private UserRepository userRepository;
 
-
+    //Save journal of user
     public void saveEntry(JournalEntry journalEntry, User user) {
         try {
             journalEntry.setDate(LocalDateTime.now());
@@ -36,6 +36,7 @@ public class JournalEntryService {
         }
     }
 
+    //Update journal
     public boolean updateEntry(JournalEntry journalEntry, ObjectId id) {
         if(journalEntryRepository.findById(id).isPresent()){
             journalEntry.setId(id);

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class PublicController {
     @Autowired
     private UserService userService;
-    private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     //Create User
     @PostMapping("create-user")

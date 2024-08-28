@@ -16,6 +16,6 @@ public class MongoConfig {
 
     @Bean
     public MongoDatabase mongoDatabase() {
-        return mongoClient.getDatabase("cluster0"); // Replace with your database name
+        return mongoClient.getDatabase("cluster0");
     }
 }

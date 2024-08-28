@@ -15,7 +15,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    //UserDetails
+
+    //get UserDetails
     @GetMapping
     public ResponseEntity<User> getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -31,7 +32,7 @@ public class UserController {
         userService.saveUser(user1);
         return new ResponseEntity<>("User information updated successfully.", HttpStatus.OK);
     }
-    //Delete User
+    //Delete User by authenticated that user
     @DeleteMapping
     public ResponseEntity<?> deleteUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
