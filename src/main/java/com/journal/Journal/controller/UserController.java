@@ -32,7 +32,7 @@ public class UserController {
         userService.saveUser(user1);
         return new ResponseEntity<>("User information updated successfully.", HttpStatus.OK);
     }
-    //Delete User by authenticated that user
+    //Delete User
     @DeleteMapping
     public ResponseEntity<?> deleteUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
