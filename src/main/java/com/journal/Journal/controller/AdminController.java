@@ -26,10 +26,19 @@ public class AdminController {
     //Delete User
     @DeleteMapping("/{userName}")
     public ResponseEntity<?> deleteUser(@PathVariable String userName){
-           if (userService.deleteByUserName(userName)){
-               return new ResponseEntity<>("User Deleted",HttpStatus.OK);
-           }
-        return new ResponseEntity<>("User Not found",HttpStatus.BAD_REQUEST);
+       
+        // Attempt to delete the user
+        if (userService.deleteByUserName(userName)) {
+            return new ResponseEntity<>("User Deleted", HttpStatus.OK);
+        }
+        
+        // Check the reason for failure
+        User user = userService.findByUserName(userName);
+        if (user == null) {
+            return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+        }
+        
+        return new ResponseEntity<>("Cannot delete ADMIN user", HttpStatus.FORBIDDEN);
     }
 
 }
