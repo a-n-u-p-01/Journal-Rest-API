@@ -52,7 +52,13 @@ public class UserService {
     }
 
     public boolean deleteByUserName(String userName) {
-        boolean hasAdminRole = userRepository.findByUserName(userName).getRoles().stream().anyMatch(role-> role.equals("ADMIN"));
+    	User user = userRepository.findByUserName(userName);
+    	
+    	if(user == null) {
+    		return false;
+    	}
+    	
+        boolean hasAdminRole = user.getRoles().stream().anyMatch(role-> role.equals("ADMIN"));
         if(!hasAdminRole){
             userRepository.findByUserName(userName).getJournalEntries().forEach(journalEntry -> journalEntryRepository.deleteById(journalEntry.getId()));
             userRepository.deleteByUserName(userName);
