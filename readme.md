@@ -19,14 +19,7 @@ The Journal REST API is a Spring Boot application designed to manage journal ent
 - Spring Security
 - Lombok
 - Maven
-
-## Getting Started
-
-### Prerequisites
-- Java 17
-- Maven
-- MongoDB
-
+  
 ### Installation
 
 1. **Clone the repository:**
@@ -53,7 +46,8 @@ spring.data.mongodb.uri=mongodb://localhost:27017/yourdatabase
 ```
 
 ## API Endpoints
-
+Here is the postman collection, import it 
+[Journal App postman_collection](https://github.com/user-attachments/files/16795344/Journal.App.postman_collection.json)
 ### Public Endpoints
 - **Create User:** `POST /public/create-user`
     - Request Body:
