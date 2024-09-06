@@ -1,17 +1,22 @@
 package com.journal.Journal.service;
-import com.journal.Journal.dto.UserDTO;
-import com.journal.Journal.entity.User;
-import com.journal.Journal.repository.JournalEntryRepository;
-import com.journal.Journal.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.journal.Journal.dto.UserDTO;
+import com.journal.Journal.entity.User;
+import com.journal.Journal.exception.RoleTransferRequiredException;
+import com.journal.Journal.exception.UserNotFoundException;
+import com.journal.Journal.repository.JournalEntryRepository;
+import com.journal.Journal.repository.UserRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
@@ -50,21 +55,43 @@ public class UserService {
     public Optional<User> findById(ObjectId id) {
         return userRepository.findById(id);
     }
-
-    public boolean deleteByUserName(String userName) {
-    	User user = userRepository.findByUserName(userName);
+    
+    public void deleteByUserName(String userName) {
+    	User userToDelete = userRepository.findByUserName(userName);
     	
-    	if(user == null) {
-    		return false;
+    	if(userToDelete == null) {
+    		throw new UserNotFoundException("User with username " + userName + " not found.");
     	}
     	
-        boolean hasAdminRole = user.getRoles().stream().anyMatch(role-> role.equals("ADMIN"));
-        if(!hasAdminRole){
-            userRepository.findByUserName(userName).getJournalEntries().forEach(journalEntry -> journalEntryRepository.deleteById(journalEntry.getId()));
-            userRepository.deleteByUserName(userName);
-            return true;
+        boolean hasAdminRole = userToDelete.getRoles().stream().anyMatch(role-> role.equals("ADMIN"));           
+        
+        // Require role transfer
+        if (hasAdminRole && countAdmins() <= 1) {
+            throw new RoleTransferRequiredException("Cannot delete the last admin. Please transfer the admin role before proceeding.");
         }
-        return false;
+        
+        userToDelete.getJournalEntries().forEach(journalEntry -> journalEntryRepository.deleteById(journalEntry.getId()));
+    	userRepository.delete(userToDelete);
+    }
+    
+    public boolean assignAdminRole(String currUserName, String newAdminUserName) { 	
+    	User newAdmin = userRepository.findByUserName(newAdminUserName);
+    	
+    	if(newAdmin == null) {
+    		throw new UserNotFoundException("User with username " + newAdminUserName + " not found.");
+    	} 
+    	
+    	if(currUserName.equals(newAdminUserName) ||  newAdmin.getRoles().contains("ADMIN")) {
+    		return false;
+    	}
+    	  	
+    	newAdmin.getRoles().add("ADMIN");
+    	userRepository.save(newAdmin);  
+    	return true;
+    }
+    
+    public long countAdmins() {
+    	return userRepository.countByRoles("ADMIN");
     }
 
     public User findByUserName(String userName) {
